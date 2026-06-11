@@ -50,10 +50,15 @@ If you manually switch to a different parent and actually want the inheritance, 
 
 ### PostgreSQL container
 
-This projct use a postgreSQL database defined in a Dockr compose file.
+This projct use a postgreSQL database defined in a Docker compose file.
 To run it, run:
 
 `Run docker compose up`
 
 Wait for it to initialize completely, and visit http://localhost:8080 or http://host-ip:8080 (as appropriate).
 
+
+### Flyway migration
+
+Create a new sql file in the resources/db/miration folder and run:
+mvn clean flyway:migrate-DconfigFiles=myFlywayConfig.conf
