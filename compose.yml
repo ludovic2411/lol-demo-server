@@ -13,11 +13,27 @@ services:
     #    target: /dev/shm
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
+    secrets:
+      - postgres_user
+      - postgres_password
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    #environment:
+      #POSTGRES_USER: ${POSTGRES_USER}
+      #POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    depends_on:
+      db:
+        condition: service_started
+
+secrets:
+  postgres_user:
+    file: ./postgres_user.txt
+  postgres_password:
+    file: ./postgres_password.txt
