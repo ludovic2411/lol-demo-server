@@ -10,6 +10,7 @@ services:
     ports:
       - 9090:9090
     volumes:
+      - keycloak-data:/opt/keycloak/data
       - ./keycloak/:/opt/keycloak/data/import/
     environment:
       KEYCLOAK_ADMIN: admin
@@ -63,6 +64,9 @@ services:
     depends_on:
       db:
         condition: service_started
+
+volumes:
+  keycloak-data:
 
 secrets:
   postgres_user:
