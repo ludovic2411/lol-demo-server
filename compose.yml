@@ -5,27 +5,43 @@ services:
     container_name: baeldung-keycloak.openid-provider
     image: quay.io/keycloak/keycloak:latest
     command:
-      - start-dev
+      - start
       - --import-realm
+      - --hostname=localhost
+      #- --hostname-port=9090
+      - --hostname-strict=false
     ports:
-      - 9090:9090
+      - "9090:9090"
     volumes:
       - keycloak-data:/opt/keycloak/data
       - ./keycloak/:/opt/keycloak/data/import/
+#    secrets:
+#      - postgres_user
+#      - postgres_password
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: change_me
       #KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}${KEYCLOAK_ADMIN_PASSWORD}
       KC_HTTP_PORT: 9090
-      KC_HOSTNAME_URL: http://localhost:9090
-      KC_HOSTNAME_ADMIN_URL: http://localhost:9090
-      KC_HOSTNAME_STRICT_BACKCHANNEL: true
+#      KC_HOSTNAME_URL: http://localhost:9090
+#      KC_HOSTNAME_ADMIN_URL: http://localhost:9090
+#      KC_HOSTNAME_STRICT_BACKCHANNEL: true
       KC_HTTP_RELATIVE_PATH: /
       KC_HTTP_ENABLED: true
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
+      # --- Nouvelle config DB Postgres ---
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      #KC_DB_USERNAME_FILE: /run/secrets/postgres_user
+      KC_DB_USERNAME: user
+      #KC_DB_PASSWORD_FILE: /run/secrets/postgres_password
+      KC_DB_PASSWORD: password
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_started
     healthcheck:
       test: [ 'CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:8080/auth/health/live' ]
       interval: 5s
@@ -52,6 +68,11 @@ services:
 
       POSTGRES_USER_FILE: /run/secrets/postgres_user
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: keycloak   # <-- ajouté : crée la base "keycloak" au premier démarrage
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql   # add volume to persist => changed to comply with postgresql 18+
       #environment:
       #POSTGRES_USER: ${POSTGRES_USER}
       #POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -67,6 +88,7 @@ services:
 
 volumes:
   keycloak-data:
+  postgres-data:
 
 secrets:
   postgres_user:
