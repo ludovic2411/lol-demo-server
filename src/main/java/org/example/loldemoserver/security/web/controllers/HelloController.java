@@ -1,4 +1,4 @@
-package org.example.loldemoserver.controllers;
+package org.example.loldemoserver.security.web.controllers;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
