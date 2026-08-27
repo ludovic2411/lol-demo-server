@@ -54,6 +54,19 @@ Two secrets file have to be created for PostgresSQL database:
 * postgres_password.txt which contains the password to the database
 * postgres_user.txt which contains the username you may want to use.
 WARNING: don't commit or push these files for security matters
+
+### Using environment variables for secrets
+
+Alternatively, you may want to use environment variables instead of secrets files
+
+A solution is to export environment variables and cleaning them up after use using Powershell files.
+However, you may be prevented from running scripts files. You can disable prevents methods with the following command
+in Powershell:
+
+```shell
+Set-ExecutionPolicy RemoteSigned -Scope Process
+```
+
 #### Getting Riot API key
 You need a Riot API key to run the project otherwise the server won't be able to laod data from Lol api's.
 You need to loggin to your Riot account in the developer portal and get your API token.
@@ -112,6 +125,21 @@ docker cp baeldung-keycloak.openid-provider:/tmp/export ./keycloak-export
 ### API
 #### Accessing the API
 Api can be tested with a classic curl command or with an API testing tool as Postman.
+
+#### Testing keycloak
+Since client is not meant to be secret in order to be accessible for Angular client, make sure client authentication is off.
+Then create a validRedirect url for the client (no need to be a real one at first).
+Then paste the link with redirectUrl and client id in the browser, for example:
+[http://localhost:9090/realms/lol-demo-server-realm/protocol/openid-connect/auth?client_id=lol-demo-server-client&response_type=code&redirect_uri=http://localhost:8081/login/oauth2/code/keycloak&scope=openid](http://localhost:9090/realms/lol-demo-server-realm/protocol/openid-connect/auth?client_id=lol-demo-server-client&response_type=code&redirect_uri=http://localhost:8081/login/oauth2/code/keycloak&scope=openid)
+A keycloak login page should popu up. Log in using Keycloak user credentials.
+You will be redirected to a blank page. Copy the code in the url. In Postman or curl; do the following:
+* POST http://localhost:9090/realms/lol-demo-server-realm/protocol/openid-connect/token
+* body with url-encoded type checked
+* grant_type => authorization_code
+* client_id => lol-demo-server-client (or your client id)
+* redirect_uri => [http://localhost:8081/login/oauth2/code/keycloak](http://localhost:8081/login/oauth2/code/keycloak)
+* code => the code you copied from url
+* client_secret => client secret key if client is confidential
 #### endpoints
 
 
