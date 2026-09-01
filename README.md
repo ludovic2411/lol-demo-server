@@ -118,9 +118,15 @@ To do so, run the given command:
 ```bash
 docker exec -it baeldung-keycloak.openid-provider /opt/keycloak/bin/kc.sh export --dir /tmp/export --realm lol-demo-server-realm --users realm_file
 ```
-A json file will be created inside the Docker container instance. You can copy this file inside Intellij project folder with the command:
+A json file will be created inside the Docker container instance. You can copy this file inside Intellij project folder with the command (stop the container before):
 ```bash
 docker cp baeldung-keycloak.openid-provider:/tmp/export ./keycloak-export
+```
+
+### Importing Realm
+NOTE: place your json realm inside a keycloak directory at the root of the project
+```bash
+ docker exec -it baeldung-keycloak.openid-provider /opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import
 ```
 ### API
 #### Accessing the API
@@ -131,13 +137,13 @@ Since client is not meant to be secret in order to be accessible for Angular cli
 Then create a validRedirect url for the client (no need to be a real one at first).
 Then paste the link with redirectUrl and client id in the browser, for example:
 [http://localhost:9090/realms/lol-demo-server-realm/protocol/openid-connect/auth?client_id=lol-demo-server-client&response_type=code&redirect_uri=http://localhost:8081/login/oauth2/code/keycloak&scope=openid](http://localhost:9090/realms/lol-demo-server-realm/protocol/openid-connect/auth?client_id=lol-demo-server-client&response_type=code&redirect_uri=http://localhost:8081/login/oauth2/code/keycloak&scope=openid)
-A keycloak login page should popu up. Log in using Keycloak user credentials.
+A keycloak login page should pop up. Log in using Keycloak user credentials.
 You will be redirected to a blank page. Copy the code in the url. In Postman or curl; do the following:
 * POST http://localhost:9090/realms/lol-demo-server-realm/protocol/openid-connect/token
 * body with url-encoded type checked
 * grant_type => authorization_code
 * client_id => lol-demo-server-client (or your client id)
-* redirect_uri => [http://localhost:8081/login/oauth2/code/keycloak](http://localhost:8081/login/oauth2/code/keycloak)
+* redirect_uri => [http://localhost:3000/login/oauth2/code/keycloak](http://localhost:8081/login/oauth2/code/keycloak)
 * code => the code you copied from url
 * client_secret => client secret key if client is confidential
 #### endpoints
