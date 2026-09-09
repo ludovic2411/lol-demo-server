@@ -84,6 +84,11 @@ You can check containers health with the following command:
 ```bash
 docker ps
 ```
+Since the project uses spring-boot-docker-compose dependency, it is possible to launch
+containers and application at the same time by starting the application.
+```bash
+mvn spring-boot:run
+```
 
 #### Stopping Docker containers
 There are 2 commands you can use depending wether you want to drop data at shutdown or not.
