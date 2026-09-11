@@ -1,6 +1,49 @@
 # Use postgres/example user/password credentials
 
 services:
+  keycloak:
+    container_name: baeldung-keycloak.openid-provider
+    image: quay.io/keycloak/keycloak:latest
+    command:
+      - start
+      - --import-realm
+      - --hostname=localhost
+      - --hostname-strict=false
+    ports:
+      - "9090:9090"
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+      - ./keycloak/:/opt/keycloak/data/import/
+    secrets:
+      - postgres_user
+      - postgres_password
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: change_me
+      KC_HTTP_PORT: 9090
+#      KC_HOSTNAME_URL: http://localhost:9090
+#      KC_HOSTNAME_ADMIN_URL: http://localhost:9090
+#      KC_HOSTNAME_STRICT_BACKCHANNEL: true
+      KC_HTTP_RELATIVE_PATH: /
+      KC_HTTP_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      # --- Newconfig DB Postgres ---
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_started
+#        Healthcheck cannot be used since the endpoint is used only from within the keycloak container
+#    healthcheck:
+#      test: [ 'CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:9090/health/live' ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 20
 
   db:
     image: postgres
@@ -20,20 +63,30 @@ services:
       - postgres_password
     environment:
 
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-    #environment:
-      #POSTGRES_USER: ${POSTGRES_USER}
-      #POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#      POSTGRES_USER_FILE: /run/secrets/postgres_user
+#      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: keycloak   # <-- Create keycloak database at startup
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-    depends_on:
-      db:
-        condition: service_started
+    volumes:
+      - postgres-data:/var/lib/postgresql   # add volume to persist => changed to comply with postgresql 18+
+      #environment:
+#      POSTGRES_USER: ${POSTGRES_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      db:
+#        condition: service_started
+
+volumes:
+  keycloak-data:
+  postgres-data:
 
 secrets:
   postgres_user:
