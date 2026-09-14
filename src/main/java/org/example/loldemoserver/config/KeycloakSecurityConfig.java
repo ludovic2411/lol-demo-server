@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 @Import({CorsConfig.class})
 public class KeycloakSecurityConfig {
 
-    private static final List<String> ALLOWED_ORIGINS = Arrays.asList("https://localhost:3000");
-    private static final List<String> ALLOWED_METHODS = Arrays.asList("GET","POST,PUT,OPTIONS");
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,UrlBasedCorsConfigurationSource corsConfigurationSource) throws Exception {
         http
