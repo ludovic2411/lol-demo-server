@@ -33,3 +33,9 @@ build/
 ###postgres credentials ###
 postgres_password.txt
 postgres_user.txt
+### Powershell script ###
+export_docker_compose.ps1
+unset_docker_compose.ps1
+### Keycloak ###
+/keycloak
+/keycloak-export
