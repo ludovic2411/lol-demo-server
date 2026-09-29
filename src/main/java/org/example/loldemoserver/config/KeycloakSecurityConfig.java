@@ -29,6 +29,7 @@ public class KeycloakSecurityConfig {
                 .cors((cors) -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/champions/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
