@@ -35,7 +35,13 @@ public class ChampionFetchingService {
                 .body(ChampionListRecordDto.class);
     }
 
-    public ChampionInResponseDto getChampion(String name) throws RiotApiException {
+    /**
+     * Get a champion by its name
+     * @param name
+     * @return
+     * @throws RiotApiException
+     */
+    public ChampionInResponseDto getChampionByName(String name) throws RiotApiException {
         //https://ddragon.leagueoflegends.com/cdn/16.18.1/data/en_US/champion/Aatrox.json
         var apiResponse =  this.restClient.get()
                 .uri("{version}/data/{language}/champion/{name}.json",this.riotApiConfig.getApiDefaultVersion(),this.riotApiConfig.getApiDefaultLanguage(),name)

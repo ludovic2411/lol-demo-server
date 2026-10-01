@@ -20,7 +20,7 @@ class ChampionFetchingServiceTest {
 
     @Test
     void testGetChampion() {
-        var response = this.championFetchingService.getChampion("Evelynn");
+        var response = this.championFetchingService.getChampionByName("Evelynn");
         assertNotNull(response);
         assertEquals("Evelynn",response.name());
     }

@@ -15,6 +15,7 @@ public class RiotApiConfig {
 
       //private String apiKey;
       private String dataDragonBaseUrl;
+      private String dataSplashBaseUrl;
       private String apiDefaultVersion;
       private String apiDefaultLanguage;
 
