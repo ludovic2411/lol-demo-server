@@ -18,8 +18,8 @@ services:
       - postgres_user
       - postgres_password
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: change_me
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HTTP_PORT: 9090
 #      KC_HOSTNAME_URL: http://localhost:9090
 #      KC_HOSTNAME_ADMIN_URL: http://localhost:9090
@@ -71,18 +71,6 @@ services:
 
     volumes:
       - postgres-data:/var/lib/postgresql   # add volume to persist => changed to comply with postgresql 18+
-      #environment:
-#      POSTGRES_USER: ${POSTGRES_USER}
-#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
-#  adminer:
-#    image: adminer
-#    restart: always
-#    ports:
-#      - 8080:8080
-#    depends_on:
-#      db:
-#        condition: service_started
 
 volumes:
   keycloak-data:
