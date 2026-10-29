@@ -1,8 +1,8 @@
 package org.example.loldemoserver.common.utils;
 
-import org.example.loldemoserver.champions.in.ChampionInResponseDto;
-import org.example.loldemoserver.champions.in.ChampionSkinInDto;
-import org.example.loldemoserver.champions.out.*;
+import org.example.loldemoserver.champions.dtos.in.ChampionInResponseDto;
+import org.example.loldemoserver.champions.dtos.in.ChampionSkinInDto;
+import org.example.loldemoserver.champions.dtos.out.*;
 
 import java.util.Arrays;
 import java.util.Collections;

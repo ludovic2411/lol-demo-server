@@ -1,7 +1,4 @@
-package org.example.loldemoserver.champions.out;
-
-import org.example.loldemoserver.champions.out.ChampionInfoDto;
-import org.example.loldemoserver.champions.out.ChampionStatsDto;
+package org.example.loldemoserver.champions.dtos.out;
 
 import java.util.List;
 
@@ -10,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 @Getter
 @Setter

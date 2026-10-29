@@ -1,6 +1,6 @@
 package org.example.loldemoserver.champions.web;
 
-import org.example.loldemoserver.champions.out.*;
+import org.example.loldemoserver.champions.dtos.out.ChampionsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

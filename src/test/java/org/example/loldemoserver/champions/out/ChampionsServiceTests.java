@@ -1,8 +1,12 @@
 package org.example.loldemoserver.champions.out;
 
-import org.example.loldemoserver.champions.in.ChampionFetchingService;
-import org.example.loldemoserver.champions.in.ChampionInResponseDto;
-import org.example.loldemoserver.champions.in.ChampionSkinInDto;
+import org.example.loldemoserver.champions.dtos.in.ChampionFetchingService;
+import org.example.loldemoserver.champions.dtos.in.ChampionInResponseDto;
+import org.example.loldemoserver.champions.dtos.in.ChampionSkinInDto;
+import org.example.loldemoserver.champions.dtos.out.ChampionInfoDto;
+import org.example.loldemoserver.champions.dtos.out.ChampionOutResponseDto;
+import org.example.loldemoserver.champions.dtos.out.ChampionStatsDto;
+import org.example.loldemoserver.champions.dtos.out.ChampionsService;
 import org.example.loldemoserver.config.RiotApiConfig;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

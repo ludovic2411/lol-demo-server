@@ -1,4 +1,4 @@
-package org.example.loldemoserver.champions.in;
+package org.example.loldemoserver.champions.dtos.in;
 
 /**
  * Dto to receive skins infos from riot api

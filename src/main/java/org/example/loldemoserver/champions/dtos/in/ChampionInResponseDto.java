@@ -1,7 +1,7 @@
-package org.example.loldemoserver.champions.in;
+package org.example.loldemoserver.champions.dtos.in;
 
-import org.example.loldemoserver.champions.out.ChampionInfoDto;
-import org.example.loldemoserver.champions.out.ChampionStatsDto;
+import org.example.loldemoserver.champions.dtos.out.ChampionInfoDto;
+import org.example.loldemoserver.champions.dtos.out.ChampionStatsDto;
 
 import java.util.List;
 

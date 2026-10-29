@@ -1,10 +1,9 @@
-package org.example.loldemoserver.champions.out;
+package org.example.loldemoserver.champions.dtos.out;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
-import org.example.loldemoserver.champions.in.ChampionFetchingService;
-import org.example.loldemoserver.champions.in.ChampionInResponseDto;
-import org.example.loldemoserver.champions.in.ChampionSkinInDto;
+import org.example.loldemoserver.champions.dtos.in.ChampionFetchingService;
+import org.example.loldemoserver.champions.dtos.in.ChampionInResponseDto;
+import org.example.loldemoserver.champions.dtos.in.ChampionSkinInDto;
 import org.example.loldemoserver.common.RiotApiException;
 import org.example.loldemoserver.config.RiotApiConfig;
 import org.slf4j.Logger;

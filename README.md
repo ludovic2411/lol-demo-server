@@ -74,10 +74,10 @@ WARNING: API token has a limited duration up to 24 hours, you need to refresh it
 #### Using the API key
 Once you get the api KEY, you can pass it to the backend as an environment variable as as shell argument or as a variable environment int eh Intellij run window.
 #### Running Docker containers
-Launch containers all at once with the following command:
+Launch containers all at once with the following command (the wait flag is for the db-init container):
 
 ```bash
-docker compose up -d
+docker compose up --wait
 ```
 
 You can check containers health with the following command:
@@ -85,7 +85,8 @@ You can check containers health with the following command:
 docker ps
 ```
 Since the project uses spring-boot-docker-compose dependency, it is possible to launch
-containers and application at the same time by starting the application.
+containers and application at the same time by starting the application. However, it is advised to launch containers before in wait mode.
+Otherwise, you may encounter a failure at the first time, do the command again:
 ```bash
 mvn spring-boot:run
 ```
