@@ -128,11 +128,27 @@ A json file will be created inside the Docker container instance. You can copy t
 docker cp baeldung-keycloak.openid-provider:/tmp/export ./keycloak-export
 ```
 
-### Importing Realm
+#### Importing Realm
 NOTE: place your json realm inside a keycloak directory at the root of the project
 ```bash
  docker exec -it baeldung-keycloak.openid-provider /opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import
 ```
+
+#### Integration testing:
+
+Keycloak can be imported into integration tests using a test container for spring boot.
+It will start a fresh docker image. Make sure to put your json realm into src/test/resources folder so it will load the configuration.
+In the json realm, you have to manually change clinet configuration to make it public and enable direct access grant like so:
+
+`{
+"clientId": "lol-demo-server-client",
+"enabled": true,
+"standardFlowEnabled": true,
+"directAccessGrantsEnabled": true,    // ✅ for Direct Access Grant tests
+"publicClient": true,                // ✅ public => false for confidential client
+"clientAuthenticatorType": "client-secret"
+}`
+
 ### API
 #### Accessing the API
 Api can be tested with a classic curl command or with an API testing tool as Postman.
@@ -152,6 +168,9 @@ You will be redirected to a blank page. Copy the code in the url. In Postman or 
 * code => the code you copied from url
 * client_secret => client secret key if client is confidential
 #### endpoints
+
+GET /champions
+GET /champions/name
 
 
 
