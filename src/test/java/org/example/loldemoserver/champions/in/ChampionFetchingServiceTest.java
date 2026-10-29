@@ -1,16 +1,23 @@
 package org.example.loldemoserver.champions.in;
 
+import org.example.loldemoserver.TestContainersPostgresConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(properties = { "riot.api-key=RGAPI-c8140615-c1a4-4380-a2f0-02f8b324ae65" })
+@Import(TestContainersPostgresConfiguration.class)
+@SpringBootTest
 class ChampionFetchingServiceTest {
 
     @Autowired
     private ChampionFetchingService championFetchingService;
+
+    @Autowired
+    private PostgreSQLContainer postgreSQLContainer;
 
     @Test
     void testGetChampions() {

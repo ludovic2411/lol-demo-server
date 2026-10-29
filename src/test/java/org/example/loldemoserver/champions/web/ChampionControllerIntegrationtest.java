@@ -1,10 +1,12 @@
 package org.example.loldemoserver.champions.web;
 
+import org.example.loldemoserver.TestContainersPostgresConfiguration;
 import org.example.loldemoserver.champions.out.ChampionsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.example.loldemoserver.common.utils.FakeChampionResponseFactoryUtil.createFakeChampionResponseOutDto;
 import static org.example.loldemoserver.common.utils.FakeChampionResponseFactoryUtil.createFakeChampionListResponseDto;
 
-
+@Import(TestContainersPostgresConfiguration.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class ChampionsControllerIntegrationTest {
