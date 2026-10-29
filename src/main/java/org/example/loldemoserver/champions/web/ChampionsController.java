@@ -1,7 +1,5 @@
 package org.example.loldemoserver.champions.web;
 
-import lombok.RequiredArgsConstructor;
-import org.example.loldemoserver.champions.in.ChampionFetchingService;
 import org.example.loldemoserver.champions.out.ChampionsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
