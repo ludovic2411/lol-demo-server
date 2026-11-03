@@ -37,12 +37,10 @@ public class ChampionsController {
 
     @GetMapping("/{name}")
     public ResponseEntity<?> getChampionByName(@PathVariable String name, Principal principal) {
-        if(principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        if(name == null || name.trim().isBlank()) return ResponseEntity.notFound().build();
-        var credentials = (Jwt) ((JwtAuthenticationToken) principal).getCredentials();
-        var userName = credentials != null && credentials.getClaim("given_name") != null ?  credentials.getClaim("given_name").toString() : "";
-        var optionalChampion = Optional.ofNullable(this.championsService.getChampionByName(userName, name));
-        return optionalChampion.isPresent() ? ResponseEntity.ok(optionalChampion.get()) : ResponseEntity.notFound().build();
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (name == null || name.isBlank()) return ResponseEntity.notFound().build();
+        var champion = championsService.getChampionByName(principal.getName(), name);
+        return champion != null ? ResponseEntity.ok(champion) : ResponseEntity.notFound().build();
     }
 
 }

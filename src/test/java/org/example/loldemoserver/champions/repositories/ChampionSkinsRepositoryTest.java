@@ -38,7 +38,7 @@ public class ChampionSkinsRepositoryTest {
                 .builder()
                 .username("naughty")
                 .championId("Syndra")
-                .skinId("134034")
+                .skinId("134006")
                 .build();
         var row = this.championSkinRepository.findById(id);
         assertTrue(row.isPresent());

@@ -41,8 +41,10 @@ public class KeycloakSecurityConfig {
 
     // Keycloak met les rôles dans "realm_access.roles", pas dans le
     // format attendu par Spring par défaut -> conversion nécessaire
+    //set principal username as keycloack claim preferred_username
     private JwtAuthenticationConverter jwtAuthConverter() {
         var converter = new JwtAuthenticationConverter();
+        converter.setPrincipalClaimName("preferred_username");
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             var realmAccess = (Map<String, Object>) jwt.getClaims().get("realm_access");
             var roles = (List<String>) realmAccess.get("roles");
