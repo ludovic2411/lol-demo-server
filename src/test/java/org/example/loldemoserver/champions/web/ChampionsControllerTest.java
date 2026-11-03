@@ -44,7 +44,7 @@ class ChampionsControllerTest {
     @Test
     void testGetChampionByName() {
         //setup get champion by name
-        Mockito.when(this.championsService.getChampionByName("Evelynn")).thenReturn(createFakeChampionResponseOutDto());
+        Mockito.when(this.championsService.getChampionByName("faker","Evelynn")).thenReturn(createFakeChampionResponseOutDto());
 
         Principal principal = () -> "faker";
         var response = this.championsController.getChampionByName("Evelynn",principal);

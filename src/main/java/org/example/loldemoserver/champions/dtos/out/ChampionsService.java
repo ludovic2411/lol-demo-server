@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.loldemoserver.champions.dtos.in.ChampionFetchingService;
 import org.example.loldemoserver.champions.dtos.in.ChampionInResponseDto;
 import org.example.loldemoserver.champions.dtos.in.ChampionSkinInDto;
+import org.example.loldemoserver.champions.entities.ChampionSkinId;
+import org.example.loldemoserver.champions.repositories.ChampionSkinRepository;
 import org.example.loldemoserver.common.RiotApiException;
 import org.example.loldemoserver.config.RiotApiConfig;
 import org.slf4j.Logger;
@@ -21,14 +23,16 @@ public class ChampionsService {
 
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ChampionsService.class);
-    private final  ChampionFetchingService championFetchingService;
+    private final ChampionFetchingService championFetchingService;
+    private final ChampionSkinRepository championSkinRepository;
     private final RiotApiConfig riotApiConfig;
 
     public ChampionListRecordDto getAllChampions() {
+
         return this.championFetchingService.getChampionResponse();
     }
 
-    public ChampionOutResponseDto getChampionByName(String name) {
+    public ChampionOutResponseDto getChampionByName(String username, String name) {
         ChampionInResponseDto inResponseDto = null;
         try {
             inResponseDto = this.championFetchingService.getChampionByName(name);
@@ -47,7 +51,7 @@ public class ChampionsService {
                 .lore(inResponseDto.lore())
                 .info(inResponseDto.info())
                 .stats(inResponseDto.stats())
-                .skins(fromSkinInToSkinOutDtos(inResponseDto.name(),inResponseDto.skins()))
+                .skins(fromSkinInToSkinOutDtos(username,inResponseDto.name(), inResponseDto.skins()))
                 .tags(inResponseDto.tags())
                 .allytips(inResponseDto.allytips())
                 .ennemytips(inResponseDto.ennemytips())
@@ -55,17 +59,24 @@ public class ChampionsService {
                 .build();
     }
 
-    private List<ChampionSkinOutDto> fromSkinInToSkinOutDtos(String name,List<ChampionSkinInDto> inDtos) {
-     return  inDtos.stream().map(inDto -> {
-         final String formattedFileUrl = String.format("%s_%s.jpg",name,inDto.num());
-         return ChampionSkinOutDto
-                .builder()
-                .id(inDto.id())
-                .num(inDto.num())
-                .name(inDto.name())
-                .chromas(inDto.chromas())
-                .skinURI(this.riotApiConfig.getDataSplashBaseUrl() + formattedFileUrl)
-                .build();
-       }).toList();
+    private List<ChampionSkinOutDto> fromSkinInToSkinOutDtos(String username,String name, List<ChampionSkinInDto> inDtos) {
+        return inDtos.stream().map(inDto -> {
+            final String formattedFileUrl = String.format("%s_%s.jpg", name, inDto.num());
+            final ChampionSkinId skinId = ChampionSkinId
+                    .builder()
+                    .username(username)
+                    .championId(name)
+                    .skinId(inDto.id())
+                    .build();
+            return ChampionSkinOutDto
+                    .builder()
+                    .id(inDto.id())
+                    .num(inDto.num())
+                    .name(inDto.name())
+                    .chromas(inDto.chromas())
+                    .skinURI(this.riotApiConfig.getDataSplashBaseUrl() + formattedFileUrl)
+                    .owned(this.championSkinRepository.findById(skinId).isPresent())
+                    .build();
+        }).toList();
     }
 }

@@ -3,6 +3,10 @@ package org.example.loldemoserver.champions.web;
 import org.example.loldemoserver.champions.dtos.out.ChampionsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +39,9 @@ public class ChampionsController {
     public ResponseEntity<?> getChampionByName(@PathVariable String name, Principal principal) {
         if(principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         if(name == null || name.trim().isBlank()) return ResponseEntity.notFound().build();
-        var optionalChampion = Optional.ofNullable(this.championsService.getChampionByName(name));
+        var credentials = (Jwt) ((JwtAuthenticationToken) principal).getCredentials();
+        var userName = credentials != null && credentials.getClaim("given_name") != null ?  credentials.getClaim("given_name").toString() : "";
+        var optionalChampion = Optional.ofNullable(this.championsService.getChampionByName(userName, name));
         return optionalChampion.isPresent() ? ResponseEntity.ok(optionalChampion.get()) : ResponseEntity.notFound().build();
     }
 

@@ -35,7 +35,7 @@ public class FakeChampionResponseFactoryUtil {
                 .lore(inResponseDto.lore())
                 .info(inResponseDto.info())
                 .stats(inResponseDto.stats())
-                .skins(Collections.singletonList(new ChampionSkinOutDto("id",0,"base skin",false,"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Evelynn_0.jpg")))
+                .skins(Collections.singletonList(new ChampionSkinOutDto("id",0,"base skin",false,"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Evelynn_0.jpg",true)))
                 .tags(inResponseDto.tags())
                 .allytips(inResponseDto.allytips())
                 .ennemytips(inResponseDto.ennemytips())

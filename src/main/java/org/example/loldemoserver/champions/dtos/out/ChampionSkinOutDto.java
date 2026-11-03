@@ -20,4 +20,5 @@ public class ChampionSkinOutDto {
     private String name;
     private boolean chromas;
     private String skinURI;
+    private boolean owned;
 }

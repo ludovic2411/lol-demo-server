@@ -47,7 +47,7 @@ class ChampionsControllerIntegrationTest {
     @WithMockUser(username = "naughty", roles = {"user"})
     void getChampionByName_shouldReturn200_whenAuthenticated() throws Exception {
         // GIVEN
-        when(championsService.getChampionByName("Evelynn")).thenReturn(createFakeChampionResponseOutDto());
+        when(championsService.getChampionByName("naughty","Evelynn")).thenReturn(createFakeChampionResponseOutDto());
 
         // WHEN / THEN
         mockMvc.perform(get("/champions/Evelynn"))
@@ -60,7 +60,7 @@ class ChampionsControllerIntegrationTest {
     @WithMockUser(username = "naughty", roles = {"user"})
     void getChampionByName_shouldReturn404_whenWrongName() throws Exception {
         // GIVEN
-        when(championsService.getChampionByName("Evelynnaa")).thenReturn(null);
+        when(championsService.getChampionByName("naughty","Evelynnaa")).thenReturn(null);
 
         // WHEN / THEN
         mockMvc.perform(get("/champions/Evelynnaa"))
