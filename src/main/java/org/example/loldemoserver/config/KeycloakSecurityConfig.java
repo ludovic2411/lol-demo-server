@@ -27,6 +27,7 @@ public class KeycloakSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,UrlBasedCorsConfigurationSource corsConfigurationSource) throws Exception {
         http
                 .cors((cors) -> cors.configurationSource(corsConfigurationSource))
+                .csrf(csrf -> csrf.disable())//disabled since authorization is jwt toen based and not cookie based
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/champions/**").authenticated()
