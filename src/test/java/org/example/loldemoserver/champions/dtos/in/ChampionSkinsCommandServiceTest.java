@@ -3,6 +3,7 @@ package org.example.loldemoserver.champions.dtos.in;
 import org.example.loldemoserver.champions.entities.ChampionSkinEntity;
 import org.example.loldemoserver.champions.entities.ChampionSkinId;
 import org.example.loldemoserver.champions.repositories.ChampionSkinRepository;
+import org.example.loldemoserver.common.utils.FakeChampionSkinFactoryUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import static org.example.loldemoserver.common.utils.FakeChampionSkinFactoryUtil.createFakeChampionSkinId;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,12 +35,7 @@ class ChampionSkinsCommandServiceTest {
 
     @Test
     void addOwnedSkin() {
-        var id = ChampionSkinId
-                .builder()
-                .username("Blubi")
-                .championId("Zyra")
-                .skinId("007")
-                .build();
+        var id = createFakeChampionSkinId();
         var entity = new ChampionSkinEntity(id);
 
         Mockito.when(championSkinRepository.save(entity)).thenReturn(entity);
@@ -53,12 +50,7 @@ class ChampionSkinsCommandServiceTest {
 
     @Test
     void addAlreadyOwnedSkin() {
-        var id = ChampionSkinId
-                .builder()
-                .username("Blubi")
-                .championId("Zyra")
-                .skinId("007")
-                .build();
+        var id = createFakeChampionSkinId();
 
         //skin does  exist before creation
         Mockito.when(championSkinRepository.existsById(id)).thenReturn(true);
@@ -69,18 +61,13 @@ class ChampionSkinsCommandServiceTest {
 
     @Test
     void deleteChampionSkin() {
-        var id = ChampionSkinId
-                .builder()
-                .username("Blubi")
-                .championId("Zyra")
-                .skinId("007")
-                .build();
+        var id = createFakeChampionSkinId();
         var entity = new ChampionSkinEntity(id);
         //Before deletion
         Mockito.when(championSkinRepository.findById(id)).thenReturn(Optional.of(entity));
         Mockito.doNothing().when(championSkinRepository).delete(entity);
 
-        this.commandService.deleteChampionSkin(id);
+        this.commandService.removeOwnedSkin(id);
         //After deletion
         Mockito.when(championSkinRepository.findById(id)).thenReturn(Optional.empty());
         assertFalse(this.fetchingService.getChampionSkinById(id).isPresent());

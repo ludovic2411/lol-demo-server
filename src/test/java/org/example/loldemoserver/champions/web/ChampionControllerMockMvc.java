@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.example.loldemoserver.common.utils.FakeChampionResponseFactoryUtil.createFakeChampionResponseOutDto;
@@ -107,5 +108,23 @@ class ChampionsControllerMockMvcTest implements TestsConstants {
         // WHEN / THEN
         mockMvc.perform(put("/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_USERNAME, roles = {"user"})
+    void deleteChampionSkinOwnership_shouldReturn204_when_deleted() throws Exception {
+        // WHEN / THEN
+        //test on an existing skin
+        mockMvc.perform(delete("/champions/" + SYNDRA + "/skins/" + SYNDRA_SKIN_ID + "/ownership"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_USERNAME, roles = {"user"})
+    void deleteChampionSkinOwnership_shouldReturn204_when_skin_not_exists() throws Exception {
+        // WHEN / THEN
+        //should return 204 to avoid creating noise on client side
+        mockMvc.perform(delete("/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership"))
+                .andExpect(status().isNoContent());
     }
 }

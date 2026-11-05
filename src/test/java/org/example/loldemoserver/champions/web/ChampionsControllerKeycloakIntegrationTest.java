@@ -20,6 +20,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @Import(TestContainersPostgresConfiguration.class)
 @SpringBootTest
@@ -89,7 +90,7 @@ class ChampionsControllerKeycloakIntegrationTest implements TestsConstants {
     /*** Region skins ***/
 
     @Test
-    void getChampionSkinOwnership_shouldReturn201() throws Exception {
+    void putChampionSkinOwnership_shouldReturn201() throws Exception {
         // Obtient un vrai token depuis le Keycloak de test
         String token = getTokenFromKeycloak();
         LOGGER.debug(String.format("Token retrieved: %s",token));
@@ -100,7 +101,7 @@ class ChampionsControllerKeycloakIntegrationTest implements TestsConstants {
     }
 
     @Test
-    void getChampionSkinOwnership_shouldReturn204_alreadyOwned() throws Exception {
+    void putChampionSkinOwnership_shouldReturn204_alreadyOwned() throws Exception {
         // Obtient un vrai token depuis le Keycloak de test
         String token = getTokenFromKeycloak();
         LOGGER.debug(String.format("Token retrieved: %s",token));
@@ -111,7 +112,7 @@ class ChampionsControllerKeycloakIntegrationTest implements TestsConstants {
     }
 
     @Test
-    void getChampionSkinOwnership_shouldReturn404_withWrongName() throws Exception {
+    void putChampionSkinOwnership_shouldReturn404_withWrongName() throws Exception {
         // Obtient un vrai token depuis le Keycloak de test
         String token = getTokenFromKeycloak();
         LOGGER.debug(String.format("Token retrieved: %s",token));
@@ -119,6 +120,28 @@ class ChampionsControllerKeycloakIntegrationTest implements TestsConstants {
         mockMvc.perform(put("/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteChampionSkinOwnership_shouldReturn204() throws Exception {
+        // Obtient un vrai token depuis le Keycloak de test
+        String token = getTokenFromKeycloak();
+        LOGGER.debug(String.format("Token retrieved: %s",token));
+        //should return 204 anyway to avoid creating noise for frontend
+        mockMvc.perform(delete("/champions/" + SYNDRA + "/skins/" + SYNDRA_SKIN_ID + "/ownership")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteChampionSkinOwnership_shouldReturn204_withWrongName() throws Exception {
+        // Obtient un vrai token depuis le Keycloak de test
+        String token = getTokenFromKeycloak();
+        LOGGER.debug(String.format("Token retrieved: %s",token));
+        //should return 204 anyway to avoid creating noise for frontend
+        mockMvc.perform(delete("/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
     }
 
 

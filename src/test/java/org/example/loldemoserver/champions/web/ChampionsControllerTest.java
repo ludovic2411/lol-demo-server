@@ -3,6 +3,7 @@ package org.example.loldemoserver.champions.web;
 import org.example.loldemoserver.champions.dtos.in.ChampionSkinsCommandService;
 import org.example.loldemoserver.champions.dtos.out.ChampionsService;
 import org.example.loldemoserver.champions.entities.ChampionSkinId;
+import org.example.loldemoserver.common.utils.TestsConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +19,7 @@ import static org.example.loldemoserver.common.utils.FakeChampionResponseFactory
 import static org.example.loldemoserver.common.utils.FakeChampionResponseFactoryUtil.createFakeChampionListResponseDto;
 
 @ExtendWith(MockitoExtension.class)
-class ChampionsControllerTest {
+class ChampionsControllerTest implements TestsConstants {
 
     @Mock
     private ChampionsService championsService;
@@ -29,10 +30,6 @@ class ChampionsControllerTest {
 
     @InjectMocks
     private  ChampionsController championsController;
-
-    private final static Principal FAKER_PRINCIPAL =  () -> "faker";
-    private final static String EVE = "Evelynn";
-    private final static String DEFAULT_SKIN_ID  = "1001";
 
     @Test
     void testGetAllChampions() {
@@ -72,7 +69,7 @@ class ChampionsControllerTest {
         Mockito.when(this.championsService.getChampionByName(FAKER_PRINCIPAL.getName(),EVE)).thenReturn(createFakeChampionResponseOutDto());
         var skinId = ChampionSkinId.builder().championId(EVE).skinId(DEFAULT_SKIN_ID).username(FAKER_PRINCIPAL.getName()).build();
         Mockito.when(this.championSkinsCommandService.addOwnedSkin(skinId)).thenReturn(true);
-        var response = this.championsController.updateChampionSkinStatus(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        var response = this.championsController.markSkinAsOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
         assertEquals(HttpStatus.CREATED,response.getStatusCode());
     }
 
@@ -82,7 +79,7 @@ class ChampionsControllerTest {
         Mockito.when(this.championsService.getChampionByName(FAKER_PRINCIPAL.getName(),EVE)).thenReturn(createFakeChampionResponseOutDto());
         var skinId = ChampionSkinId.builder().championId(EVE).skinId(DEFAULT_SKIN_ID).username(FAKER_PRINCIPAL.getName()).build();
         Mockito.when(this.championSkinsCommandService.addOwnedSkin(skinId)).thenReturn(false);
-        var response = this.championsController.updateChampionSkinStatus(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        var response = this.championsController.markSkinAsOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
         assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
     }
 
@@ -90,7 +87,20 @@ class ChampionsControllerTest {
     void testPutChampionNotFound() {
         //setup get champion by name
         Mockito.when(this.championsService.getChampionByName(FAKER_PRINCIPAL.getName(),EVE)).thenReturn(null);
-        var response = this.championsController.updateChampionSkinStatus(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        var response = this.championsController.markSkinAsOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
         assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+    }
+
+    @Test
+    void testDeleteChampionSkinOwnership() {
+        var response = this.championsController.markSkinAsNotOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
+    }
+
+    @Test
+    void testDeleteChampionSkinOwnershipUnknownChampion() {
+        var response = this.championsController.markSkinAsNotOwned(WRONG_EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        //should give 204 anyway to avoid creating noise on client side
+        assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
     }
 }
