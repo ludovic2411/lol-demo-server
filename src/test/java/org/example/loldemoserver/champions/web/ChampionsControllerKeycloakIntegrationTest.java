@@ -3,6 +3,7 @@ package org.example.loldemoserver.champions.web;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.restassured.RestAssured;
 import org.example.loldemoserver.TestContainersPostgresConfiguration;
+import org.example.loldemoserver.common.utils.TestsConstants;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @Import(TestContainersPostgresConfiguration.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-class ChampionsControllerKeycloakIntegrationTest {
+class ChampionsControllerKeycloakIntegrationTest implements TestsConstants {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ChampionsControllerKeycloakIntegrationTest.class);
 
@@ -69,7 +71,7 @@ class ChampionsControllerKeycloakIntegrationTest {
         // Obtient un vrai token depuis le Keycloak de test
         String token = getTokenFromKeycloak();
         LOGGER.debug(String.format("Token retrieved: %s",token));
-        mockMvc.perform(get("/champions/Elise")
+        mockMvc.perform(get("/champions/" + EVE)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
@@ -79,17 +81,53 @@ class ChampionsControllerKeycloakIntegrationTest {
         // Obtient un vrai token depuis le Keycloak de test
         String token = getTokenFromKeycloak();
         LOGGER.debug(String.format("Token retrieved: %s",token));
-        mockMvc.perform(get("/champions/ObiWan")
+        mockMvc.perform(get("/champions/" + WRONG_EVE)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
+
+    /*** Region skins ***/
+
+    @Test
+    void getChampionSkinOwnership_shouldReturn201() throws Exception {
+        // Obtient un vrai token depuis le Keycloak de test
+        String token = getTokenFromKeycloak();
+        LOGGER.debug(String.format("Token retrieved: %s",token));
+        //"/{name}/skins/{skinId}/ownership"
+        mockMvc.perform(put("/champions/" + EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void getChampionSkinOwnership_shouldReturn204_alreadyOwned() throws Exception {
+        // Obtient un vrai token depuis le Keycloak de test
+        String token = getTokenFromKeycloak();
+        LOGGER.debug(String.format("Token retrieved: %s",token));
+        //"/{name}/skins/{skinId}/ownership"
+        mockMvc.perform(put("/champions/" + SYNDRA + "/skins/" + SYNDRA_SKIN_ID + "/ownership")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getChampionSkinOwnership_shouldReturn404_withWrongName() throws Exception {
+        // Obtient un vrai token depuis le Keycloak de test
+        String token = getTokenFromKeycloak();
+        LOGGER.debug(String.format("Token retrieved: %s",token));
+        //"/{name}/skins/{skinId}/ownership"
+        mockMvc.perform(put("/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
+    }
+
 
     private String getTokenFromKeycloak() {
         LOGGER.debug("-------Getting token from Keycloak--------");
         return RestAssured.given()
                 .formParam("grant_type", "password")
                 .formParam("client_id", "lol-demo-server-client")
-                .formParam("username", "naughty")
+                .formParam("username", DEFAULT_USERNAME)
                 .formParam("password", "sushi")
                 .post(keycloak.getAuthServerUrl() + "/realms/lol-demo-server-realm/protocol/openid-connect/token")
                 .jsonPath().getString("access_token");

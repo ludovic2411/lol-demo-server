@@ -1,7 +1,6 @@
-package org.example.loldemoserver.champions.in;
+package org.example.loldemoserver.champions.dtos.in;
 
 import org.example.loldemoserver.TestContainersPostgresConfiguration;
-import org.example.loldemoserver.champions.dtos.in.ChampionFetchingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

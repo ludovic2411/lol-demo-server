@@ -32,8 +32,9 @@ public class ChampionsService {
         return this.championFetchingService.getChampionResponse();
     }
 
+    //TODO change to optional
     public ChampionOutResponseDto getChampionByName(String username, String name) {
-        ChampionInResponseDto inResponseDto = null;
+        ChampionInResponseDto inResponseDto;
         try {
             inResponseDto = this.championFetchingService.getChampionByName(name);
         } catch (RiotApiException e) {
