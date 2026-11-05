@@ -14,8 +14,8 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    private static final List<String> ALLOWED_ORIGINS = Arrays.asList("http://localhost:3000");
-    private static final List<String> ALLOWED_METHODS = Arrays.asList("GET", "POST", "PUT", "OPTIONS");
+    private static final List<String> ALLOWED_ORIGINS = List.of("http://localhost:3000");
+    private static final List<String> ALLOWED_METHODS = Arrays.asList("GET", "POST", "PUT","DELETE", "OPTIONS");
     private static final List<String> ALLOWED_HEADERS = Arrays.asList("Content-Type", "Authorization", "Accept");
     private final static long PREFLIGHT_CACHE_MAX_AGE = 3600L;
 

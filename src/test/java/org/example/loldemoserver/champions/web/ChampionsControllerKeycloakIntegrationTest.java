@@ -11,16 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 
 @Import(TestContainersPostgresConfiguration.class)
 @SpringBootTest
@@ -142,6 +146,26 @@ class ChampionsControllerKeycloakIntegrationTest implements TestsConstants {
         mockMvc.perform(delete("/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
+    }
+
+    /**
+     * simulate a call from the frontend to check security + cors config
+     * @throws Exception
+     */
+    @Test
+    void preflightDelete_shouldBeAllowed_fromFrontendOrigin() throws Exception {
+        var url = "/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership";
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + getTokenFromKeycloak());
+        headers.add(HttpHeaders.ORIGIN, FRONT_ORIGIN);
+        headers.add(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "DELETE");
+        headers.add(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "authorization");
+        
+        mockMvc.perform(options(url).headers(headers))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, FRONT_ORIGIN))
+                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                        containsString("DELETE")));
     }
 
 

@@ -10,4 +10,5 @@ public interface TestsConstants {
     String DEFAULT_SKIN_ID = "1001";
     String SYNDRA = "Syndra";
     String SYNDRA_SKIN_ID = "134006";
+    String FRONT_ORIGIN = "http://localhost:3000";
 }
