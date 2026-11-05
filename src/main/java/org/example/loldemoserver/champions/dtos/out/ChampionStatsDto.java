@@ -1,4 +1,4 @@
-package org.example.loldemoserver.champions.out;
+package org.example.loldemoserver.champions.dtos.out;
 
 public record ChampionStatsDto(
         double hp,

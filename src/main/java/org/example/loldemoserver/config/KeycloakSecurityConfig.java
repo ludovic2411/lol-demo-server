@@ -27,6 +27,7 @@ public class KeycloakSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,UrlBasedCorsConfigurationSource corsConfigurationSource) throws Exception {
         http
                 .cors((cors) -> cors.configurationSource(corsConfigurationSource))
+                .csrf(csrf -> csrf.disable())//disabled since authorization is jwt toen based and not cookie based
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/champions/**").authenticated()
@@ -41,8 +42,10 @@ public class KeycloakSecurityConfig {
 
     // Keycloak met les rôles dans "realm_access.roles", pas dans le
     // format attendu par Spring par défaut -> conversion nécessaire
+    //set principal username as keycloack claim preferred_username
     private JwtAuthenticationConverter jwtAuthConverter() {
         var converter = new JwtAuthenticationConverter();
+        converter.setPrincipalClaimName("preferred_username");
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             var realmAccess = (Map<String, Object>) jwt.getClaims().get("realm_access");
             var roles = (List<String>) realmAccess.get("roles");

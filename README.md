@@ -74,10 +74,10 @@ WARNING: API token has a limited duration up to 24 hours, you need to refresh it
 #### Using the API key
 Once you get the api KEY, you can pass it to the backend as an environment variable as as shell argument or as a variable environment int eh Intellij run window.
 #### Running Docker containers
-Launch containers all at once with the following command:
+Launch containers all at once with the following command (the wait flag is for the db-init container):
 
 ```bash
-docker compose up -d
+docker compose up --wait
 ```
 
 You can check containers health with the following command:
@@ -85,7 +85,8 @@ You can check containers health with the following command:
 docker ps
 ```
 Since the project uses spring-boot-docker-compose dependency, it is possible to launch
-containers and application at the same time by starting the application.
+containers and application at the same time by starting the application. However, it is advised to launch containers before in wait mode.
+Otherwise, you may encounter a failure at the first time, do the command again:
 ```bash
 mvn spring-boot:run
 ```
@@ -128,11 +129,27 @@ A json file will be created inside the Docker container instance. You can copy t
 docker cp baeldung-keycloak.openid-provider:/tmp/export ./keycloak-export
 ```
 
-### Importing Realm
+#### Importing Realm
 NOTE: place your json realm inside a keycloak directory at the root of the project
 ```bash
  docker exec -it baeldung-keycloak.openid-provider /opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import
 ```
+
+#### Integration testing:
+
+Keycloak can be imported into integration tests using a test container for spring boot.
+It will start a fresh docker image. Make sure to put your json realm into src/test/resources folder so it will load the configuration.
+In the json realm, you have to manually change clinet configuration to make it public and enable direct access grant like so:
+
+`{
+"clientId": "lol-demo-server-client",
+"enabled": true,
+"standardFlowEnabled": true,
+"directAccessGrantsEnabled": true,    // ✅ for Direct Access Grant tests
+"publicClient": true,                // ✅ public => false for confidential client
+"clientAuthenticatorType": "client-secret"
+}`
+
 ### API
 #### Accessing the API
 Api can be tested with a classic curl command or with an API testing tool as Postman.
@@ -152,6 +169,9 @@ You will be redirected to a blank page. Copy the code in the url. In Postman or 
 * code => the code you copied from url
 * client_secret => client secret key if client is confidential
 #### endpoints
+
+GET /champions
+GET /champions/name
 
 
 

@@ -1,0 +1,83 @@
+package org.example.loldemoserver.champions.dtos.out;
+
+import lombok.RequiredArgsConstructor;
+import org.example.loldemoserver.champions.dtos.in.ChampionFetchingService;
+import org.example.loldemoserver.champions.dtos.in.ChampionInResponseDto;
+import org.example.loldemoserver.champions.dtos.in.ChampionSkinInDto;
+import org.example.loldemoserver.champions.entities.ChampionSkinId;
+import org.example.loldemoserver.champions.repositories.ChampionSkinRepository;
+import org.example.loldemoserver.common.RiotApiException;
+import org.example.loldemoserver.config.RiotApiConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * Service that handle the logic to convert response from Riot Api to custom api
+ */
+@Service
+@RequiredArgsConstructor
+public class ChampionsService {
+
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ChampionsService.class);
+    private final ChampionFetchingService championFetchingService;
+    private final ChampionSkinRepository championSkinRepository;
+    private final RiotApiConfig riotApiConfig;
+
+    public ChampionListRecordDto getAllChampions() {
+
+        return this.championFetchingService.getChampionResponse();
+    }
+
+    //TODO change to optional
+    public ChampionOutResponseDto getChampionByName(String username, String name) {
+        ChampionInResponseDto inResponseDto;
+        try {
+            inResponseDto = this.championFetchingService.getChampionByName(name);
+        } catch (RiotApiException e) {
+            LOGGER.error("No champion found with name: {}. Error is: {}", name, e.getMessage());
+            return null;
+        }
+        return ChampionOutResponseDto
+                .builder()
+                .version(inResponseDto.version())
+                .id(inResponseDto.id())
+                .key(inResponseDto.key())
+                .name(inResponseDto.name())
+                .title(inResponseDto.title())
+                .blurb(inResponseDto.blurb())
+                .lore(inResponseDto.lore())
+                .info(inResponseDto.info())
+                .stats(inResponseDto.stats())
+                .skins(fromSkinInToSkinOutDtos(username,inResponseDto.name(), inResponseDto.skins()))
+                .tags(inResponseDto.tags())
+                .allytips(inResponseDto.allytips())
+                .ennemytips(inResponseDto.ennemytips())
+                .partype(inResponseDto.partype())
+                .build();
+    }
+
+    private List<ChampionSkinOutDto> fromSkinInToSkinOutDtos(String username,String name, List<ChampionSkinInDto> inDtos) {
+        return inDtos.stream().map(inDto -> {
+            final String formattedFileUrl = String.format("%s_%s.jpg", name, inDto.num());
+            final ChampionSkinId skinId = ChampionSkinId
+                    .builder()
+                    .username(username)
+                    .championId(name)
+                    .skinId(inDto.id())
+                    .build();
+            return ChampionSkinOutDto
+                    .builder()
+                    .id(inDto.id())
+                    .num(inDto.num())
+                    .name(inDto.name())
+                    .chromas(inDto.chromas())
+                    .skinURI(this.riotApiConfig.getDataSplashBaseUrl() + formattedFileUrl)
+                    .owned(this.championSkinRepository.findById(skinId).isPresent())
+                    .build();
+        }).toList();
+    }
+}

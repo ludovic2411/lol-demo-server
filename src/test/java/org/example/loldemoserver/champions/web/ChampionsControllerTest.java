@@ -1,8 +1,9 @@
 package org.example.loldemoserver.champions.web;
 
-import org.example.loldemoserver.champions.in.ChampionInResponseDto;
-import org.example.loldemoserver.champions.in.ChampionSkinInDto;
-import org.example.loldemoserver.champions.out.*;
+import org.example.loldemoserver.champions.dtos.in.ChampionSkinsCommandService;
+import org.example.loldemoserver.champions.dtos.out.ChampionsService;
+import org.example.loldemoserver.champions.entities.ChampionSkinId;
+import org.example.loldemoserver.common.utils.TestsConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,18 +13,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.example.loldemoserver.common.utils.FakeChampionResponseFactoryUtil.createFakeChampionResponseOutDto;
+import static org.example.loldemoserver.common.utils.FakeChampionResponseFactoryUtil.createFakeChampionListResponseDto;
 
 @ExtendWith(MockitoExtension.class)
-class ChampionsControllerTest {
+class ChampionsControllerTest implements TestsConstants {
 
     @Mock
     private ChampionsService championsService;
+
+    @Mock
+    private ChampionSkinsCommandService championSkinsCommandService;
 
 
     @InjectMocks
@@ -32,8 +34,7 @@ class ChampionsControllerTest {
     @Test
     void testGetAllChampions() {
         Mockito.when(this.championsService.getAllChampions()).thenReturn(createFakeChampionListResponseDto());
-        Principal principal = () -> "faker";
-        var response = this.championsController.getAllChampions(principal);
+        var response = this.championsController.getAllChampions(FAKER_PRINCIPAL);
         assertEquals(HttpStatus.OK,response.getStatusCode());
         assertTrue(response.hasBody());
     }
@@ -48,54 +49,58 @@ class ChampionsControllerTest {
     @Test
     void testGetChampionByName() {
         //setup get champion by name
-        Mockito.when(this.championsService.getChampionByName("Evelynn")).thenReturn(createFakeChampionresponseOutDto());
+        Mockito.when(this.championsService.getChampionByName(FAKER_PRINCIPAL.getName(),EVE)).thenReturn(createFakeChampionResponseOutDto());
 
-        Principal principal = () -> "faker";
-        var response = this.championsController.getChampionByName("Evelynn",principal);
+        var response = this.championsController.getChampionByName(EVE,FAKER_PRINCIPAL);
         assertEquals(HttpStatus.OK,response.getStatusCode());
         assertTrue(response.hasBody());
     }
 
     @Test
     void testGetChampionByNameNoPrincipal() {
-        var response = this.championsController.getChampionByName("Evelynn",null);
+        var response = this.championsController.getChampionByName(EVE,null);
         assertEquals(HttpStatus.UNAUTHORIZED,response.getStatusCode());
         assertFalse(response.hasBody());
     }
 
-    private static ChampionOutResponseDto createFakeChampionresponseOutDto() {
+    @Test
+    void testPutChampionSkinOwnership() {
         //setup get champion by name
-        var infos = new ChampionInfoDto(4, 2, 7, 10);
-        var stats = new ChampionStatsDto(648, 92, 56, 23, 323, 45, 5, 46, 3, 10.5, 6.5, 2, 5, 3.75, 2, 0.15, 62, 2, 0.75, 1.225);
-        var tags = Arrays.asList("tag1", "tag2", "tag3");
-        var tips = Arrays.asList("tip1", "tip2", "tip3");
-        var skinsInDto = Arrays.asList(new ChampionSkinInDto("id0", 0, "Base skin", false)
-                , new ChampionSkinInDto("id1", 1, "Chromalight Evelynn", true));
-        ChampionInResponseDto inResponseDto = new ChampionInResponseDto("1.0.0", "1", "key1", "Evelynn", "Title", "blurb", "lore", infos,
-                stats, skinsInDto, tags, tips, tips, "Mana");
-        return ChampionOutResponseDto
-                .builder()
-                .version(inResponseDto.version())
-                .id(inResponseDto.id())
-                .key(inResponseDto.key())
-                .name(inResponseDto.name())
-                .title(inResponseDto.title())
-                .blurb(inResponseDto.blurb())
-                .lore(inResponseDto.lore())
-                .info(inResponseDto.info())
-                .stats(inResponseDto.stats())
-                .skins(Collections.singletonList(new ChampionSkinOutDto("id",0,"base skin",false,"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Evelynn_0.jpg")))
-                .tags(inResponseDto.tags())
-                .allytips(inResponseDto.allytips())
-                .ennemytips(inResponseDto.ennemytips())
-                .partype(inResponseDto.partype())
-                .build();
+        Mockito.when(this.championsService.getChampionByName(FAKER_PRINCIPAL.getName(),EVE)).thenReturn(createFakeChampionResponseOutDto());
+        var skinId = ChampionSkinId.builder().championId(EVE).skinId(DEFAULT_SKIN_ID).username(FAKER_PRINCIPAL.getName()).build();
+        Mockito.when(this.championSkinsCommandService.addOwnedSkin(skinId)).thenReturn(true);
+        var response = this.championsController.markSkinAsOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
     }
 
-    private static ChampionListRecordDto createFakeChampionListResponseDto() {
-        // setup get all champions
-        Map<String,Object> data = new HashMap<>();
-        data.put("data",createFakeChampionresponseOutDto());
-        return new ChampionListRecordDto("type","format","1.0.0",data);
+    @Test
+    void testPutChampionSkinOwnershipAlreadyOwned() {
+        //setup get champion by name
+        Mockito.when(this.championsService.getChampionByName(FAKER_PRINCIPAL.getName(),EVE)).thenReturn(createFakeChampionResponseOutDto());
+        var skinId = ChampionSkinId.builder().championId(EVE).skinId(DEFAULT_SKIN_ID).username(FAKER_PRINCIPAL.getName()).build();
+        Mockito.when(this.championSkinsCommandService.addOwnedSkin(skinId)).thenReturn(false);
+        var response = this.championsController.markSkinAsOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
+    }
+
+    @Test
+    void testPutChampionNotFound() {
+        //setup get champion by name
+        Mockito.when(this.championsService.getChampionByName(FAKER_PRINCIPAL.getName(),EVE)).thenReturn(null);
+        var response = this.championsController.markSkinAsOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+    }
+
+    @Test
+    void testDeleteChampionSkinOwnership() {
+        var response = this.championsController.markSkinAsNotOwned(EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
+    }
+
+    @Test
+    void testDeleteChampionSkinOwnershipUnknownChampion() {
+        var response = this.championsController.markSkinAsNotOwned(WRONG_EVE,DEFAULT_SKIN_ID,FAKER_PRINCIPAL);
+        //should give 204 anyway to avoid creating noise on client side
+        assertEquals(HttpStatus.NO_CONTENT,response.getStatusCode());
     }
 }

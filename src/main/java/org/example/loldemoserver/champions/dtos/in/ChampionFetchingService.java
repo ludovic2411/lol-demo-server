@@ -1,6 +1,6 @@
-package org.example.loldemoserver.champions.in;
+package org.example.loldemoserver.champions.dtos.in;
 
-import org.example.loldemoserver.champions.out.ChampionListRecordDto;
+import org.example.loldemoserver.champions.dtos.out.ChampionListRecordDto;
 import org.example.loldemoserver.common.RiotApiException;
 import org.example.loldemoserver.config.RiotApiConfig;
 import org.springframework.stereotype.Service;
