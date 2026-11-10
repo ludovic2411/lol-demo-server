@@ -28,6 +28,10 @@
     </scm>
     <properties>
         <java.version>26</java.version>
+        <jjwt.version>0.13.0</jjwt.version>
+        <testcontainer.keycloack.version>4.4.0</testcontainer.keycloack.version>
+        <spring.mockmvc.version>6.3.0</spring.mockmvc.version>
+        <flyway.maven.plugin.version>12.8.1</flyway.maven.plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -36,6 +40,7 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
@@ -93,18 +98,18 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.12.6</version>
+            <version>${jjwt.version}</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.12.6</version>
+            <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.12.6</version>
+            <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -120,6 +125,8 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+
 
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -172,7 +179,7 @@
         <dependency>
             <groupId>com.github.dasniko</groupId>
             <artifactId>testcontainers-keycloak</artifactId>
-            <version>3.4.0</version>
+            <version>${testcontainer.keycloack.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -197,14 +204,14 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>spring-mock-mvc</artifactId>
-            <version>6.0.1</version>
+            <version>${spring.mockmvc.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>6.0.1</version>
+            <version>${spring.mockmvc.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -262,7 +269,7 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>12.8.1</version>
+                <version>${flyway.maven.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
