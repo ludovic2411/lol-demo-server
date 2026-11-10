@@ -160,12 +160,29 @@ class ChampionsControllerKeycloakIntegrationTest implements TestsConstants {
         headers.add(HttpHeaders.ORIGIN, FRONT_ORIGIN);
         headers.add(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "DELETE");
         headers.add(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "authorization");
-        
+
         mockMvc.perform(options(url).headers(headers))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, FRONT_ORIGIN))
                 .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
                         containsString("DELETE")));
+    }
+
+    /**
+     * simulate a call from another frontend to check security + cors config
+     * @throws Exception
+     */
+    @Test
+    void preflightDelete_shouldBeAllowed_fromUnauthorizedFrontendOrigin() throws Exception {
+        var url = "/champions/" + WRONG_EVE + "/skins/" + DEFAULT_SKIN_ID + "/ownership";
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + getTokenFromKeycloak());
+        headers.add(HttpHeaders.ORIGIN, UNAUTHORIZED_FRONT_ORIGIN);
+        headers.add(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "DELETE");
+        headers.add(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "authorization");
+
+        mockMvc.perform(options(url).headers(headers))
+                .andExpect(status().is(403));
     }
 
 

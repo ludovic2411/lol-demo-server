@@ -11,4 +11,5 @@ public interface TestsConstants {
     String SYNDRA = "Syndra";
     String SYNDRA_SKIN_ID = "134006";
     String FRONT_ORIGIN = "http://localhost:3000";
+    String UNAUTHORIZED_FRONT_ORIGIN = "http://localhost:4000";
 }
