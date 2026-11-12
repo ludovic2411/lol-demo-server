@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Import(TestContainersPostgresConfiguration.class)
 @DataJpaTest
-public class ChampionSkinsRepositoryTestImpl implements ChampionSkinsRepositoryTest {
+public class ChampionSkinsRepositoryImplTest implements ChampionSkinsRepositoryTest {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ChampionSkinsRepositoryTestImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ChampionSkinsRepositoryImplTest.class);
 
     @Autowired
     private PostgreSQLContainer postgreSQLContainer;

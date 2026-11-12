@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ActiveProfiles("qa")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("qa")
-public class NeonChampionSkinsRepositoryTestImpl implements ChampionSkinsRepositoryTest {
+public class NeonChampionSkinsRepositoryImplTest implements ChampionSkinsRepositoryTest {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(NeonChampionSkinsRepositoryTestImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(NeonChampionSkinsRepositoryImplTest.class);
 
     @Autowired
     private ChampionSkinRepository championSkinRepository;
